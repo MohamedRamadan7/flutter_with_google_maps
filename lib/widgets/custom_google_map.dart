@@ -19,9 +19,11 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
   void initState() {
     initialCameraPosition = const CameraPosition(
         zoom: 12, target: LatLng(31.187084851056554, 29.928110526889437));
-    initMarkers();
-    initPolyLine();
-    initPolyGon();
+    // initMarkers();
+    // initPolyLine();
+    // initPolyGon();
+    initCircle();
+
     super.initState();
   }
 
@@ -34,6 +36,7 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
   Set<Marker> markers = {};
   Set<Polyline> plylines = {};
   Set<Polygon> plygons = {};
+  Set<Circle> circles = {};
   late GoogleMapController googleMapController;
   @override
   Widget build(BuildContext context) {
@@ -41,8 +44,9 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
       children: [
         GoogleMap(
             zoomControlsEnabled: false,
+            circles: circles,
             // polylines: plylines,
-            polygons: plygons,
+            // polygons: plygons,
             // markers: markers,
             style: Utils.mapStyles, // add style wiht json to String
             onMapCreated: (controller) {
@@ -155,5 +159,15 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
         .toSet();
     markers.addAll(myMarkers);
     setState(() {});
+  }
+
+  void initCircle() {
+    var hlwanyElsydy = Circle(
+        strokeWidth: 3,
+        fillColor: Colors.black.withOpacity(.5),
+        radius: 5000,
+        center: LatLng(31.190530497083092, 29.921797512010084),
+        circleId: CircleId('1'));
+    circles.add(hlwanyElsydy);
   }
 }
