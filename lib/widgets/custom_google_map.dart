@@ -20,6 +20,7 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
     initialCameraPosition = const CameraPosition(
         zoom: 12, target: LatLng(31.187084851056554, 29.928110526889437));
     initMarkers();
+    initPolyLine();
     super.initState();
   }
 
@@ -30,6 +31,8 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
   }
 
   Set<Marker> markers = {};
+  Set<Polyline> plylines = {};
+
   late GoogleMapController googleMapController;
   @override
   Widget build(BuildContext context) {
@@ -37,9 +40,9 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
       children: [
         GoogleMap(
             zoomControlsEnabled: false,
+            polylines: plylines,
             markers: markers,
-            // add style wiht json to String
-            style: Utils.mapStyles,
+            style: Utils.mapStyles, // add style wiht json to String
             onMapCreated: (controller) {
               googleMapController = controller;
               // add style wiht json in googleMapController
@@ -77,6 +80,33 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
   //       await imageFrameInfo.image.toByteData(format: ui.ImageByteFormat.png);
   //   return imageByteData!.buffer.asUint8List();
   // }
+  void initPolyLine() async {
+    var myPlylines = Polyline(
+      color: Colors.red,
+      width: 5,
+      zIndex: 2,
+      startCap: Cap.roundCap,
+      points: [
+        LatLng(31.156292947997493, 29.869536284746005),
+        LatLng(31.16740687294844, 29.877001334100342),
+        LatLng(31.178207943132684, 29.91408381581429),
+        LatLng(31.196691531759672, 29.92816423496481),
+      ],
+      polylineId: PolylineId('1'),
+    );
+    var myPlylines2 = Polyline(
+      zIndex: 1,
+      width: 5,
+      startCap: Cap.roundCap,
+      points: [
+        LatLng(31.14790066695592, 29.91529764510305),
+        LatLng(31.186745224764937, 29.896058452864683),
+      ],
+      polylineId: PolylineId('2'),
+    );
+    plylines.add(myPlylines);
+    plylines.add(myPlylines2);
+  }
 
   void initMarkers() async {
     // var myMarker = Marker(
