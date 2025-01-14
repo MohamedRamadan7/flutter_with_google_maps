@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'map_style.dart';
+
 class CustomGoogleMap extends StatefulWidget {
   const CustomGoogleMap({super.key});
 
@@ -30,13 +32,13 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
     return Stack(
       children: [
         GoogleMap(
+            // add style wiht json to String
+            style: Utils.mapStyles,
             onMapCreated: (controller) {
               googleMapController = controller;
+              // add style wiht json in googleMapController
+              // initMapStyle();
             },
-            // cameraTargetBounds: CameraTargetBounds(
-            //   LatLngBounds(
-            //     southwest: LatLng(31.035705475323176, 29.783907860678376),
-            //     northeast: LatLng(31.28865257972049, 30.02904029481735))),
             initialCameraPosition: initialCameraPosition),
         Positioned(
             bottom: 16,
@@ -44,12 +46,6 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
             left: 16,
             child: ElevatedButton(
                 onPressed: () {
-                  // CameraPosition cameraPosition = CameraPosition(
-                  //     zoom: 12,
-                  //     target: LatLng(31.158887525900187, 31.482723748533026));
-                  // googleMapController.animateCamera(
-                  //     CameraUpdate.newCameraPosition(cameraPosition));
-
                   googleMapController.animateCamera(CameraUpdate.newLatLng(
                       LatLng(31.158887525900187, 31.482723748533026)));
                   setState(() {});
@@ -57,5 +53,11 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
                 child: Text("Change Location")))
       ],
     );
+  }
+
+  void initMapStyle() async {
+    var nightMApStyle = await DefaultAssetBundle.of(context)
+        .loadString("assets/map_styles/night_map_style.json");
+    googleMapController.setMapStyle(nightMApStyle);
   }
 }
