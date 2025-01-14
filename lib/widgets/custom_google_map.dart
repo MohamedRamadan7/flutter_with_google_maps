@@ -21,6 +21,7 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
         zoom: 12, target: LatLng(31.187084851056554, 29.928110526889437));
     initMarkers();
     initPolyLine();
+    initPolyGon();
     super.initState();
   }
 
@@ -32,7 +33,7 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
 
   Set<Marker> markers = {};
   Set<Polyline> plylines = {};
-
+  Set<Polygon> plygons = {};
   late GoogleMapController googleMapController;
   @override
   Widget build(BuildContext context) {
@@ -40,8 +41,9 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
       children: [
         GoogleMap(
             zoomControlsEnabled: false,
-            polylines: plylines,
-            markers: markers,
+            // polylines: plylines,
+            polygons: plygons,
+            // markers: markers,
             style: Utils.mapStyles, // add style wiht json to String
             onMapCreated: (controller) {
               googleMapController = controller;
@@ -106,6 +108,26 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
     );
     plylines.add(myPlylines);
     plylines.add(myPlylines2);
+  }
+
+  void initPolyGon() async {
+    var myPlyGon = Polygon(
+        strokeWidth: 3,
+        fillColor: Colors.black.withOpacity(.5),
+        holes: [
+          [
+            LatLng(31.181651139080422, 29.905358279958918),
+            LatLng(31.179081028394208, 29.908126319493967),
+            LatLng(31.18418446561954, 29.9093708644012),
+          ]
+        ],
+        points: [
+          LatLng(31.16740687294844, 29.877001334100342),
+          LatLng(31.178207943132684, 29.91408381581429),
+          LatLng(31.196691531759672, 29.92816423496481),
+        ],
+        polygonId: PolygonId('1'));
+    plygons.add(myPlyGon);
   }
 
   void initMarkers() async {
