@@ -36,6 +36,7 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
     return Stack(
       children: [
         GoogleMap(
+            zoomControlsEnabled: false,
             markers: markers,
             // add style wiht json to String
             style: Utils.mapStyles,
