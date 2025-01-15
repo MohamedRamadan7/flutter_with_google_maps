@@ -18,9 +18,9 @@ class _GoogleMapItemState extends State<GoogleMapItem> {
   @override
   void initState() {
     initialCameraPosition = const CameraPosition(
-        zoom: 1, target: LatLng(31.187084851056554, 29.928110526889437));
+        zoom: 12, target: LatLng(31.187084851056554, 29.928110526889437));
     locationService = LocationService();
-    updateMyLocation();
+    // updateMyLocation();
     super.initState();
   }
 
@@ -49,12 +49,13 @@ class _GoogleMapItemState extends State<GoogleMapItem> {
           right: 16,
           left: 16,
           child: ElevatedButton(
-            onPressed: () {
-              googleMapController!.animateCamera(CameraUpdate.newLatLng(
-                  LatLng(31.158887525900187, 31.482723748533026)));
-              setState(() {});
+            onPressed: () async {
+              LatLng latLng = await locationService.getCurrentLocationData();
+              googleMapController!
+                  .animateCamera(CameraUpdate.newLatLng(latLng));
+              setMyLocationMarkers(latLng);
             },
-            child: Text("Change Location"),
+            child: Text("Current Location"),
           ),
         )
       ],

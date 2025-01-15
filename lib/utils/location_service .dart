@@ -1,3 +1,4 @@
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
 class LocationService {
@@ -31,5 +32,11 @@ class LocationService {
   void getRealTimeLocationData(void Function(LocationData)? onData) {
     location.changeSettings(distanceFilter: 2);
     location.onLocationChanged.listen(onData);
+  }
+
+  Future<LatLng> getCurrentLocationData() async {
+    LocationData locationData = await location.getLocation();
+    LatLng latLng = LatLng(locationData.latitude!, locationData.longitude!);
+    return latLng;
   }
 }
