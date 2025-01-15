@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/utils/location_service%20.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
 
 import 'map_style.dart';
 
@@ -14,12 +14,12 @@ class GoogleMapItem extends StatefulWidget {
 class _GoogleMapItemState extends State<GoogleMapItem> {
   late CameraPosition initialCameraPosition;
   GoogleMapController? googleMapController;
-  late Location location;
+  late LocationService locationService;
   @override
   void initState() {
     initialCameraPosition = const CameraPosition(
-        zoom: 12, target: LatLng(31.187084851056554, 29.928110526889437));
-    location = Location();
+        zoom: 1, target: LatLng(31.187084851056554, 29.928110526889437));
+    locationService = LocationService();
     updateMyLocation();
     super.initState();
   }
@@ -30,12 +30,15 @@ class _GoogleMapItemState extends State<GoogleMapItem> {
     super.dispose();
   }
 
+  Set<Marker> markers = {};
+  bool isFristCal = true;
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         GoogleMap(
             zoomControlsEnabled: false,
+            markers: markers,
             style: Utils.mapStyles, // add style wiht json to String
             onMapCreated: (controller) {
               googleMapController = controller;
@@ -58,48 +61,37 @@ class _GoogleMapItemState extends State<GoogleMapItem> {
     );
   }
 
-  Future<void> checkAndRequestLocationService() async {
-    bool isServiceEnabled = await location.serviceEnabled();
-    if (!isServiceEnabled) {
-      isServiceEnabled = await location.requestService();
-      if (!isServiceEnabled) {
-        //ToDo: show error bar
-      }
-    }
-    checkAndRequestLocationPermission();
-  }
-
-  Future<bool> checkAndRequestLocationPermission() async {
-    PermissionStatus permissionStatus = await location.hasPermission();
-    if (permissionStatus == PermissionStatus.deniedForever) {
-      return false;
-    }
-    if (permissionStatus == PermissionStatus.denied) {
-      permissionStatus = await location.requestPermission();
-      if (permissionStatus != PermissionStatus.granted) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  void getLocationdata() async {
-    location.onLocationChanged.listen((locationData) {
-      CameraPosition cameraPosition = CameraPosition(
-        target: LatLng(locationData.latitude!, locationData.longitude!),
-      );
-      googleMapController
-          ?.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
-    });
-  }
-
   void updateMyLocation() async {
-    await checkAndRequestLocationService();
-    bool hasPermission = await checkAndRequestLocationPermission();
+    await locationService.checkAndRequestLocationService();
+    bool hasPermission =
+        await locationService.checkAndRequestLocationPermission();
     if (hasPermission) {
-      getLocationdata();
+      locationService.getRealTimeLocationData((locationData) {
+        LatLng position =
+            LatLng(locationData.latitude!, locationData.longitude!);
+        setMyLocationMarkers(position);
+        updateMyCamera(position);
+      });
     } else {
       //ToDo: show error bar No permission
     }
+  }
+
+  void updateMyCamera(LatLng position) {
+    if (isFristCal) {
+      CameraPosition cameraPosition =
+          CameraPosition(target: position, zoom: 12);
+      googleMapController
+          ?.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+    } else {
+      googleMapController?.animateCamera(CameraUpdate.newLatLng(position));
+    }
+  }
+
+  void setMyLocationMarkers(LatLng position) {
+    var myLocationMarker =
+        Marker(markerId: MarkerId("my_location_marker"), position: position);
+    markers.add(myLocationMarker);
+    setState(() {});
   }
 }
